@@ -1,0 +1,54 @@
+﻿@model IEnumerable<PurchaseInvoiceViewModel>
+
+<h2>Purchase Invoices</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning mt-5">
+        <h4 class="alert-heading">No Invoices!</h4>
+        <p class="mb-0">No Products were added yet.</p>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer ID</th>
+            <th>Products</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var invoice in Model)
+        {
+            <tr>
+                <td>@invoice.Id</td>
+                <td>@invoice.CustomerId</td>
+                <td>
+                    <ul>
+                        @foreach (var product in invoice.Products)
+                        {
+                            <li>@product.Name - @product.Price.ToString("C")</li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a class="btn btn-primary me-1" asp-action="Edit" asp-route-id="@invoice.Id" >Edit</a>
+                    <a class="btn btn-info me-1" asp-action="Details" asp-route-id="@invoice.Id">Details</a>
+                    <a class="btn btn-info me-1" asp-action="Print" asp-route-id="@invoice.Id">Print</a>
+                    <a href="javascript:;" class="btn btn-danger rounded rounded-3 js-delete" data-id="@invoice.Id">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-success">Create New Invoice</a>
+
+@section scripts
+{
+    <script src="~/js/invoice-index.js" asp-append-version="true"></script>
+}

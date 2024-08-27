@@ -1,0 +1,118 @@
+﻿@model PurchaseInvoiceViewModel
+
+<h2>Edit Purchase Invoice</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="products-table-body">
+            @for (int i = 0; i < Model.Products.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <select name="Products[@i].Id" class="form-control product-select" data-product-id="@Model.Products[i].Id">
+                            <option value=""></option>
+                            @foreach (var item in Model.ProductOptions)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input name="Products[@i].Price" class="form-control product-price" value="@Model.Products[i].Price" readonly />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-row">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-primary" id="add-row">Add Product</button>
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Function to set the selected product for each row
+            function setSelectedProducts() {
+                $('#products-table-body .product-select').each(function () {
+                    var selectedProductId = $(this).data('product-id');
+                    if (selectedProductId) {
+                        $(this).val(selectedProductId);
+                    }
+                });
+            }
+
+            // Initialize the selected products
+            setSelectedProducts();
+
+            $('#add-row').click(function () {
+                var rowCount = $('#products-table-body tr').length;
+                var newRow = `
+                            <tr>
+                                <td>
+                                    <select name="Products[${rowCount}].Id" class="form-control product-select">
+                                        <option value=""></option> 
+                                    @foreach (var item in Model.ProductOptions)
+                                    {
+                                            <option value="@item.Value">@item.Text</option>
+                                    }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input name="Products[${rowCount}].Price" class="form-control product-price" readonly />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger remove-row">Remove</button>
+                                </td>
+                            </tr>
+                        `;
+                $('#products-table-body').append(newRow);
+            });
+
+            $('#products-table-body').on('change', '.product-select', function () {
+                var row = $(this).closest('tr');
+                var productId = $(this).val();
+                $.ajax({
+                    url: '/Product/GetPrice',
+                    type: 'GET',
+                    data: { id: productId },
+                    success: function (data) {
+                        row.find('.product-price').val(data.price);
+                    }
+                });
+            });
+
+            // Handle product selection change to fill price
+            $('#products-table-body').on('change', '.product-select', function () {
+                var row = $(this).closest('tr');
+                var productId = $(this).val();
+
+                $.ajax({
+                    url: '/Product/GetPrice',
+                    type: 'GET',
+                    data: { id: productId },
+                    success: function (data) {
+                        row.find('.product-price').val(data);
+                    }
+                });
+            });
+
+            $('#products-table-body').on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+}

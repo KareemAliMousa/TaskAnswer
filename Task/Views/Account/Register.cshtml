@@ -1,0 +1,65 @@
+﻿@model CustomerViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="Register">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label mt-4"></label>
+            <input type="text" class="form-control" asp-for="Name" placeholder="Name">
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-6 mb-5">
+            <label asp-for="Password" class="form-label mt-4"></label>
+            <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <p class="mt-5 ">Alreay have account <a asp-controller="Account" asp-action="Login">Login</a></p>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var messageElement = document.getElementById('message');
+            if (messageElement) {
+                setTimeout(function () {
+                    messageElement.style.opacity = 0;
+                    setTimeout(function () {
+                        messageElement.style.display = 'none';
+                    }, 500); // Match this duration with the opacity transition duration
+                }, 3000); // Display for 3 seconds
+            }
+        });
+    </script>
+
+    <style>
+        #message {
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+}

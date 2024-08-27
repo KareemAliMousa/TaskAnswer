@@ -1,0 +1,62 @@
+﻿@model CustomerViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+<form method="post" asp-action="Login">
+    <div class="row">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label mt-4"></label>
+            <input type="text" class="form-control" asp-for="Name" placeholder="Name">
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-6 mb-5">
+            <label asp-for="Password" class="form-label mt-4"></label>
+            <input type="password" class="form-control" asp-for="Password" placeholder="Password">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <p class="mt-5 ">Don't Have Account <a asp-controller="Account" asp-action="Register">Register</a></p>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var messageElement = document.getElementById('message');
+            if (messageElement) {
+                setTimeout(function () {
+                    messageElement.style.opacity = 0;
+                    setTimeout(function () {
+                        messageElement.style.display = 'none';
+                    }, 500); // Match this duration with the opacity transition duration
+                }, 3000); // Display for 3 seconds
+            }
+        });
+    </script>
+
+    <style>
+        #message {
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+}
